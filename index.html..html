@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moving Toward a Goal — Oslo&amp;Co Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Oslo&Co brand palette — text colours: Deep Plum + White only. */
+    --paper:#F4F5E9;        /* Sand — page background */
+    --paper-line:#E6E3E8;
+    --ink:#2C173E;          /* Deep Plum */
+    --ink-soft:#684884;
+    --white:#FFFFFF;
+    --tan:#E8F2EF;          /* pale Mint tint, default chip bg */
+    --tan-line:#D4F0E8;     /* Mint */
+
+    /* Category fills, remapped onto the brand's real colours by frequency:
+       Mint (background colour) carries the majority "default" stamps, matching the brand's
+       "generous, calm background" role. Terracotta (background colour) marks the moderately-
+       frequent "important" stamps. Cyan and Lime — the brand's own accent colours, explicitly
+       "used sparingly" — are reserved for the two rarest categories (one stamp each): the
+       information note and the final settled/done capstone. Each fill pairs with dark ink text;
+       each also has a darker "-text" shade of the same hue for small text/borders on white. */
+    --quest:#D4F0E8;        --quest-text:#00855F;     --quest-bg:#E8F2EF;   /* Mint — default */
+    --culture:#19EBDD;      --info-text:#02827A;      --culture-bg:#E4F6F5; /* Cyan — information */
+    --settled:#DAFF6F;      --settled-text:#638500;   --settled-bg:#F2F8E2; /* Lime — you're done */
+    --red:#F6D1C6;          --important-text:#7A240B; --red-bg:#F5E9E5;     /* Terracotta — important */
+
+    --lavender:#D1B9EB;     --lavender-bg:#EDE7F3;    /* decorative use — callouts */
+
+    --accent:#2C173E;       /* links rest in Deep Plum, per the brand's text-colour rule */
+    --accent-hover:#02827A; /* a sparing flash of the Cyan accent on hover only */
+    --accent-bg:#19EBDD;
+    --accent-bg-line:#0FCBBE;
+    --radius:14px;
+    --shadow: 0 2px 10px rgba(44,23,62,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  :root{ padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
+  html{ scroll-padding-top:env(safe-area-inset-top, 0px); }
+  body{
+    background:var(--paper);
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(44,23,62,0.04) 39px),
+      repeating-linear-gradient(90deg, transparent, transparent 38px, rgba(44,23,62,0.025) 39px);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{ max-width:1180px; margin:0 auto; padding: 40px 24px 90px; }
+
+  /* ---------- HEADER ---------- */
+  header.top{ margin-bottom: 28px; }
+  .brand-mark{
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:16px;
+  }
+  .brand-mark span{
+    font-family:'STIX Two Text', serif; font-weight:600; font-size:15px;
+    color:var(--ink); letter-spacing:-0.01em;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin:0 0 10px;
+  }
+  h1.title{
+    font-family:'STIX Two Text', serif;
+    font-weight:600;
+    font-size: clamp(34px, 5vw, 56px);
+    line-height:1.02;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  h1.title em{ font-style:italic; font-weight:500; color:var(--accent); }
+  .tagline{
+    font-family:'STIX Two Text', serif; font-weight:500; font-style:italic;
+    font-size:18px; color:var(--accent); margin:8px 0 0;
+  }
+  .sub{ font-size:16px; color:var(--ink-soft); max-width:640px; line-height:1.5; margin: 10px 0 0;}
+
+  /* ---------- BOARD LAYOUT ---------- */
+  .board{ display:grid; grid-template-columns: 1fr 320px; gap: 30px; margin-top: 40px; align-items:start; }
+  .path-wrap{ position:relative; }
+  #pathSvg{ position:absolute; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .path-col{ position:relative; z-index:1; }
+
+  .divider{
+    position:absolute; left:0; width:100%;
+    display:flex; align-items:center; gap:12px;
+  }
+  .divider .num{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--white);
+    background:var(--ink); border-radius:20px; padding:4px 10px; font-weight:600; white-space:nowrap;
+  }
+  .divider .line{ flex:1; height:1px; background: var(--tan-line); }
+  .divider .txt{ text-align:right; }
+  .divider .txt .ph{ font-family:'STIX Two Text',serif; font-weight:600; font-size:19px; margin:0; }
+  .divider .txt .sub2{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin:2px 0 0;}
+
+  .node{
+    position:absolute;
+    display:flex; align-items:center; gap:12px;
+    cursor:pointer;
+    border:none; background:none; padding:0;
+    text-align:left;
+    font-family:inherit;
+  }
+  .node .stamp{
+    position:relative;
+    width:32px; height:32px; border-radius:50%;
+    flex:0 0 auto;
+    border: 2.5px dashed rgba(44,23,62,0.25);
+    box-shadow: var(--shadow);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .node:hover .stamp{ transform: scale(1.15); }
+  .node.active .stamp{ transform: scale(1.25); box-shadow: 0 4px 18px rgba(44,23,62,0.30); }
+  @keyframes stampPunch{
+    0%{ transform: scale(1); }
+    35%{ transform: scale(0.8) rotate(-4deg); }
+    65%{ transform: scale(1.32) rotate(2deg); }
+    100%{ transform: scale(1.25) rotate(0deg); }
+  }
+  .node.stamped .stamp{ animation: stampPunch .4s cubic-bezier(.34,1.56,.64,1); }
+  .node{ max-width:100%; }
+  .node .label{ max-width:150px; }
+  .node .label .t{ font-size:14.5px; font-weight:600; line-height:1.25; color:var(--ink); }
+  .node.flip{ flex-direction:row-reverse; text-align:right; }
+  .node.flip .label{ text-align:right; }
+
+  /* ---------- DETAIL PANEL (desktop) ---------- */
+  aside.panel{
+    position:sticky; top:24px;
+    background:var(--white);
+    border:1px solid var(--paper-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding:22px 22px 20px;
+    min-height:340px;
+  }
+  aside.panel .ph-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color: var(--ink-soft); font-weight:600; margin:0 0 8px;
+  }
+  aside.panel h2{
+    font-family:'STIX Two Text',serif; font-size:23px; font-weight:600; line-height:1.15; margin:0 0 10px;
+  }
+  aside.panel .pbadge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+    background: var(--tan); border:1px solid var(--tan-line); border-radius:20px; padding:4px 10px;
+    margin-bottom:16px; color:var(--ink);
+  }
+  aside.panel .pbadge.crit{ background:var(--red-bg); border-color:var(--important-text); color:var(--important-text); }
+  aside.panel .badge-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  aside.panel .badge-row .pbadge{ margin-bottom:0; }
+  aside.panel .for-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+    background:var(--lavender-bg); border:1px solid var(--lavender); border-radius:20px; padding:4px 10px;
+    color:var(--ink);
+  }
+  aside.panel dl{ margin:0; }
+  aside.panel dt{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin-top:14px;
+  }
+  aside.panel dt:first-child{ margin-top:0; }
+  aside.panel dd{ margin:4px 0 0; font-size:14.5px; line-height:1.5; }
+  aside.panel dd a{ color:var(--accent); font-weight:600; text-decoration:underline; text-underline-offset:2px; }
+  aside.panel dd a:hover{ color:var(--accent-hover); }
+  aside.panel .empty{ color:var(--ink-soft); font-size:14.5px; line-height:1.6; }
+  aside.panel .empty svg{ margin-bottom:10px; }
+
+  /* ---------- USEFUL LINKS (per-step, dynamic) ---------- */
+  .step-links{ margin-top:14px; padding-top:12px; border-top:1px solid var(--paper-line); }
+  .step-links ul{ margin:6px 0 0; padding:0; list-style:none; }
+  .step-links li{ margin-bottom:6px; }
+  .step-links li:last-child{ margin-bottom:0; }
+  .step-links a{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:13px; font-weight:600; color:var(--accent);
+    text-decoration:underline; text-underline-offset:2px; line-height:1.4;
+  }
+  .step-links a:hover{ color:var(--accent-hover); }
+  .step-links a::after{ content:"↗"; font-size:11px; text-decoration:none; opacity:.7; }
+
+  /* ---------- ASK-HR PROMPT BOX (persistent, inside white panel) ---------- */
+  .hr-prompts{ margin-top:22px; padding-top:18px; border-top:1px dashed var(--tan-line); }
+  .hr-prompts .hp-tag{
+    display:flex; align-items:center; gap:7px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:0 0 10px; font-weight:600;
+  }
+  .hr-prompts ul{ margin:0; padding-left:18px; }
+  .hr-prompts li{ font-size:13px; line-height:1.5; color:var(--ink); margin-bottom:8px; }
+  .hr-prompts li:last-child{ margin-bottom:0; }
+
+  /* ---------- CALLOUT BUBBLES (decorative, not part of the trail path) ---------- */
+  .callout-bubble{
+    position:absolute; left:0; right:0; margin:0 auto;
+    width:min(78%, 220px);
+    background:var(--lavender-bg); border:1.5px dashed var(--lavender); border-radius:16px;
+    padding:12px 14px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:0;
+    z-index:2;
+    cursor:pointer; font:inherit;
+    appearance:none; -webkit-appearance:none;
+    transition: box-shadow .15s ease, transform .5s cubic-bezier(.4,0,.2,1);
+    transform-style:preserve-3d;
+  }
+  .callout-bubble:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .callout-bubble:hover{ box-shadow:0 4px 14px rgba(44,23,62,0.16); }
+  .callout-bubble.expanded{ z-index:6; }
+  @media (max-width:459.98px){
+    /* On mobile the trail and the bubbles both sit centred, so an expanded
+       bubble (taller than the space reserved for it while collapsed) has
+       nowhere safe to grow into without covering the step below it.
+       Solve this the same way the step detail panel already does: pop it
+       out as a proper centred overlay with a dimmed backdrop, rather than
+       letting it awkwardly coexist with the trail underneath it. */
+    .callout-bubble.expanded{
+      position:fixed; top:50%; left:50% !important; right:auto !important;
+      transform:translate(-50%,-50%) !important; margin:0;
+      width:min(86vw, 340px); max-height:76vh; overflow-y:auto;
+      z-index:40; box-shadow:0 12px 32px rgba(44,23,62,0.35);
+    }
+  }
+  @keyframes cardSpin{
+    0%{ transform: rotateY(0deg); }
+    50%{ transform: rotateY(95deg) scale(.94); }
+    100%{ transform: rotateY(0deg); }
+  }
+  .callout-bubble.spin{ animation: cardSpin .5s cubic-bezier(.4,0,.2,1); }
+  .callout-bubble.cb-white{ background:var(--white); border:1px solid var(--paper-line); }
+  .callout-bubble .cb-icon{
+    display:flex; align-items:center; justify-content:center;
+    width:42px; height:42px; border-radius:50%;
+    background:rgba(44,23,62,0.07);
+    font-size:22px; line-height:1; margin-bottom:8px;
+    box-shadow:0 2px 5px rgba(44,23,62,0.10);
+    transition: transform .2s cubic-bezier(.34,1.56,.64,1);
+    color:var(--ink);
+  }
+  .callout-bubble .cb-icon svg{ width:22px; height:22px; }
+  .callout-bubble:hover .cb-icon{ transform: scale(1.15) rotate(-8deg); }
+  .callout-bubble .cb-body{ min-width:0; }
+  .callout-bubble .cb-title{
+    display:block; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11.5px;
+    letter-spacing:.01em; color:var(--ink); line-height:1.35;
+  }
+  .callout-bubble .cb-more{
+    display:grid; grid-template-rows:0fr; opacity:0;
+    font-family:'STIX Two Text',serif; font-style:italic; font-weight:500; font-size:11.5px;
+    line-height:1.45; color:var(--ink-soft);
+    transition: grid-template-rows .25s ease, opacity .2s ease, margin-top .25s ease;
+  }
+  .callout-bubble .cb-more-inner{ overflow:hidden; min-height:0; }
+  .callout-bubble.expanded .cb-more{ grid-template-rows:1fr; opacity:1; margin-top:6px; }
+  .callout-bubble .cb-more a{ color:var(--accent); font-weight:700; text-decoration:underline; text-underline-offset:2px; }
+  .callout-bubble .cb-more a:hover{ color:var(--accent-hover); }
+  .callout-bubble .cb-toggle{
+    position:absolute; top:9px; right:9px;
+    display:flex; align-items:center; justify-content:center;
+    width:20px; height:20px;
+    border-radius:50%; background:var(--white); border:1.5px solid var(--accent);
+    font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:12px;
+    color:var(--accent); line-height:1;
+    box-shadow:var(--shadow);
+  }
+  .callout-bubble.expanded .cb-toggle .cb-toggle-open{ display:none; }
+  .callout-bubble:not(.expanded) .cb-toggle .cb-toggle-close{ display:none; }
+
+  /* From here the trail has room to breathe, so bubbles tuck into the side margins
+     instead of sitting on the centre line — two on the left, two on the right. */
+  @media (min-width:460px){
+    .callout-bubble{
+      left:auto; right:auto; margin:0;
+      width:158px;
+      padding:12px 14px;
+    }
+    .callout-bubble .cb-title{ font-size:11.5px; }
+    .callout-bubble .cb-more{ font-size:11.5px; }
+    .callout-bubble .cb-icon{ width:38px; height:38px; font-size:19px; margin-bottom:6px; }
+    .callout-bubble .cb-icon svg{ width:19px; height:19px; }
+    .callout-bubble.cb-left{ left:6px; }
+    .callout-bubble.cb-right{ right:6px; }
+  }
+
+  /* ---------- MOBILE DRAWER ---------- */
+  .backdrop{ position:fixed; inset:0; background:rgba(44,23,62,0.38); z-index:20; opacity:0; pointer-events:none; transition:opacity .2s ease; }
+  .backdrop.open{ opacity:1; pointer-events:auto; }
+  .drawer-close{ display:none; }
+
+  @media (max-width: 880px){
+    .board{ grid-template-columns: 1fr; }
+    aside.panel{
+      position:fixed; left:0; right:0; bottom:0; top:auto;
+      max-height:78vh; overflow-y:auto;
+      border-radius: 18px 18px 0 0;
+      transform: translateY(105%);
+      transition: transform .28s cubic-bezier(.2,.8,.3,1);
+      z-index:30; margin:0;
+    }
+    aside.panel.open{ transform: translateY(0); }
+    .drawer-close{
+      display:flex; align-items:center; justify-content:center;
+      width:32px;height:32px; border-radius:50%; border:1px solid var(--paper-line);
+      background:var(--paper); position:absolute; top:14px; right:14px; cursor:pointer;
+    }
+    .node .label{ max-width:130px; }
+    .node .stamp{ width:26px; height:26px; }
+  }
+  @media (max-width: 420px){
+    .node .label{ max-width:112px; }
+    .node .label .t{ font-size:13px; }
+  }
+
+  /* ---------- INFO-FLAGGED (BLUE) TRAIL NODES ---------- */
+  .node.culture .label .badge{ border-color:var(--info-text); color:var(--info-text); }
+  .node.culture .label .culturedot{ width:6px; height:6px; border-radius:50%; background:var(--culture); display:inline-block; }
+  aside.panel .pbadge.culture{ background:var(--culture-bg); border-color:var(--info-text); color:var(--info-text); }
+
+  /* ---------- SETTLED (GREEN) NODES ---------- */
+  .node.settled .label .badge{ border-color:var(--settled-text); color:var(--settled-text); }
+  .node.settled .label .settleddot{ width:6px; height:6px; border-radius:50%; background:var(--settled); display:inline-block; }
+  aside.panel .pbadge.settled{ background:var(--settled-bg); border-color:var(--settled-text); color:var(--settled-text); }
+
+  /* ---------- FOOTER ---------- */
+  footer.contacts{ margin-top:64px; border-top:1px solid var(--tan-line); padding-top:26px; }
+  footer.contacts h3{ font-family:'STIX Two Text',serif; font-size:20px; margin:0 0 14px; }
+  .contact-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); gap:10px 24px; }
+  .contact-grid div{ font-size:13.5px; }
+  .contact-grid b{ display:block; font-size:13px; color:var(--ink); }
+  .contact-grid span{ color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .contact-grid span a{ color:inherit; font-family:inherit; font-size:inherit; text-decoration:underline; text-underline-offset:2px; }
+  .contact-grid span a:hover{ color:var(--accent); }
+  .disclaimer{ margin-top:22px; font-size:12.5px; color:var(--ink-soft); font-style:italic; max-width:760px; line-height:1.5; }
+
+  /* ---------- PRINT FALLBACK ---------- */
+  .print-fallback{ display:none; }
+  @media print{
+    body{ background:#fff; }
+    .backdrop{ display:none; }
+    .callout-bubble{ display:none; }
+    .board{ display:none; }
+    .print-fallback{ display:block; }
+    .print-fallback h2{ font-family:'STIX Two Text',serif; font-size:16px; margin:22px 0 8px; border-bottom:1px solid #ccc; padding-bottom:4px;}
+    .print-row{ display:grid; grid-template-columns: 26px 1fr auto; gap:10px; padding:6px 0; border-bottom:1px solid #eee; font-size:12.5px; align-items:baseline; }
+    .print-row b{ font-family:'IBM Plex Mono',monospace; }
+    .print-note{ grid-column: 2 / 4; color:#555; font-size:11.5px; margin-top:2px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <div class="brand-mark">
+      <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="13" cy="13" r="10" fill="none" stroke="#2C173E" stroke-width="4"/>
+      </svg>
+      <span>Oslo&amp;Co</span>
+    </div>
+    <h1 class="title">Moving Toward a <em>Goal</em></h1>
+    <p class="tagline">From contract to starting job to living in Oslo</p>
+    <p class="sub">From signing your contract to finally feeling at home in Oslo — we've mapped out every step so you're never left wondering what comes next. Tap along the way for the full details; the trail itself just keeps you oriented on what to do and roughly when.</p>
+  </header>
+
+  <div class="board">
+    <div class="path-wrap">
+      <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="path-col" id="pathCol"></div>
+    </div>
+
+    <aside class="panel" id="panel">
+      <div class="drawer-close" id="drawerClose">✕</div>
+      <div id="panelBody">
+        <p class="ph-tag">Getting started</p>
+        <svg width="46" height="46" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:10px;">
+          <circle cx="20" cy="40" r="16" fill="#D1B9EB"/>
+          <circle cx="20" cy="17" r="13" fill="#D9A876"/>
+          <circle cx="16" cy="16" r="1.4" fill="#2C173E"/>
+          <circle cx="24" cy="16" r="1.4" fill="#2C173E"/>
+          <path d="M16 22 Q20 25 24 22" stroke="#2C173E" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        </svg>
+        <h2>Tap a step to begin</h2>
+        <p class="empty">Pick any checkpoint on the trail and we'll show you where to go, when to start it, how long it typically takes, and anything worth knowing before you show up.</p>
+      </div>
+      <div class="hr-prompts" id="hrPrompts">
+        <p class="hp-tag">💬 Questions worth asking at work</p>
+        <ul id="hrList"></ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="contacts">
+    <h3>Key contacts &amp; portals</h3>
+    <div class="contact-grid">
+      <div><b>UDI</b> — immigration &amp; work permits <span><a href="https://www.udi.no/en/" target="_blank" rel="noopener">udi.no</a></span></div>
+      <div><b>Skatteetaten</b> — tax, ID number, tax card <span><a href="https://www.skatteetaten.no/en/" target="_blank" rel="noopener">skatteetaten.no</a></span></div>
+      <div><b>NAV</b> — National Insurance &amp; benefits <span><a href="https://www.nav.no/en/home" target="_blank" rel="noopener">nav.no</a></span></div>
+      <div><b>Helsenorge</b> — GP / fastlege, health records <span><a href="https://www.helsenorge.no/en/" target="_blank" rel="noopener">helsenorge.no</a></span></div>
+      <div><b>Altinn</b> — digital gov services via BankID <span><a href="https://www.altinn.no/en/" target="_blank" rel="noopener">altinn.no</a></span></div>
+      <div><b>Statens vegvesen</b> — driving licence <span><a href="https://www.vegvesen.no/en/" target="_blank" rel="noopener">vegvesen.no</a></span></div>
+      <div><b>Politiet</b> — police registration (EU/EEA) <span><a href="https://www.politiet.no/en/" target="_blank" rel="noopener">politiet.no</a></span></div>
+    </div>
+    <p class="disclaimer">Processing times here are our best estimate, based on official guidance current as of mid/late 2026 — they'll shift with application volumes and case complexity. Worth checking live wait times on the relevant government portal before setting expectations with the employee.</p>
+  </footer>
+
+  <div class="print-fallback" id="printFallback"></div>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+
+<script>
+const PHASES = [
+  { title:"Phase 1 — Preparation", sub:"before you land", color:"#D1B9EB", skin:"#A9714A", outfit:"#F6D1C6" },
+  { title:"Phase 2 — Arrival", sub:"the first few weeks", color:"#19EBDD", skin:"#F4D9C6", outfit:"#D4F0E8" },
+  { title:"Phase 3 — Settling In", sub:"month two and beyond", color:"#2C173E", skin:"#6B4226", outfit:"#19EBDD" },
+];
+
+// Small circular "bust" avatar used on each phase divider — same friendly, original
+// flat-illustration language as the header, just cropped to head + shoulders.
+function personAvatar(skin, outfit){
+  return `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="40" r="16" fill="${outfit}"/>
+    <circle cx="20" cy="17" r="13" fill="${skin}"/>
+    <circle cx="16" cy="16" r="1.4" fill="#2C173E"/>
+    <circle cx="24" cy="16" r="1.4" fill="#2C173E"/>
+    <path d="M16 22 Q20 25 24 22" stroke="#2C173E" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+
+const STEPS = [
+  { id:1, phase:0, title:"Sign employment contract", badge:"Day 0", where:"With the employer, before anything else.", when:"Immediately.", time:"N/A", notes:"Everything else on this trail leans on this document existing — permit, housing, bank account. Keep several certified copies.", critical:false , ask:["Check if there's any support with relocation costs, like flights or temporary housing.", "Don't forget to ask your company about company benefits — phone, health insurance, travel, pension, union."] , links:[{label:"Rules for written employment contracts (Arbeidstilsynet)", url:"https://www.arbeidstilsynet.no/en/"}] , icon:"✍️" , for:"Employee" },
+  { id:2, phase:0, title:"Apply for work & residence permit", badge:"4–8 wks", where:"<a href='https://www.udi.no/en/want-to-apply/work-immigration/' target='_blank' rel='noopener'>UDI online portal</a>.", when:"As soon as the contract is signed.", time:"4–8 weeks typical, up to ~12 at peak times.", notes:"Since Feb 2026 the employer must submit a digital job confirmation via UDI before the employee can apply. Fee ≈ NOK 6,300–8,000. EU/EEA citizens skip this — see Step 7 instead.", critical:true , ask:["Ask if HR can help track the application or flag if anything looks delayed."] , links:[{label:"Your UDI page — track the application", url:"https://www.udi.no/en/my-page/"}, {label:"Digital application submission guide (Oslo SUA)", url:"https://www.sua.no/wp-content/uploads/2025/10/Digital-soknadsinnlevering-Oslo-2025.pdf"}] , icon:"🛂" , for:"Either" },
+
+  { id:3, phase:1, title:"Book a Tax Office ID-check", badge:"book ASAP", where:"<a href='https://www.skatteetaten.no/en/person/foreign/you-must-notify-us-when-you-move/' target='_blank' rel='noopener'>skatteetaten.no</a> — book before or the moment you land.", when:"Before / on arrival.", time:"Appointment slots can be 1–3+ weeks out in the cities.", notes:"HR can help by providing the employment contract copy needed for the appointment.", critical:true , ask:["Ask if HR can help you prepare for or book this appointment."] , icon:"📅" , for:"Employee" },
+  { id:4, phase:1, title:"Get a D-number or national ID number", badge:"days–2 wks", where:"At the ID-check appointment (tax office or <a href='https://www.skatteetaten.no/en/contact/offices/sua' target='_blank' rel='noopener'>Service Centre for Foreign Workers</a>).", when:"At the appointment.", time:"D-number: often same day to 2 weeks. National ID number (6+ months' stay): a few weeks by post.", notes:"Bring passport, signed contract, and proof of address. Non-EU applicants also bring the permit decision.", critical:true , ask:["Check who to let know once you have your new ID number."] , links:[{label:"Identification numbers & electronic ID explained", url:"https://www.skatteetaten.no/en/person/national-registry/identitetsnummer-og-elektronisk-id/"}, {label:"Find a tax office that does ID checks & book an appointment", url:"https://www.skatteetaten.no/en/contact/offices/id-check/"}] , icon:"🆔" , for:"Employee" },
+  { id:5, phase:1, title:"Apply for a tax deduction card (skattekort)", badge:"few days", where:"Same appointment, or <a href='https://www.altinn.no/en/' target='_blank' rel='noopener'>altinn.no</a> / <a href='https://www.skatteetaten.no/en/' target='_blank' rel='noopener'>skatteetaten.no</a> once the ID number is active.", when:"Right after Step 4.", time:"Usually a few days once the ID number is live.", notes:"Skip it and the employer has to withhold 50% tax from the first paycheck — prioritise this above almost everything else.", critical:true , ask:["Ask what happens with your pay if the tax card isn't ready in time."] , links:[{label:"Know your rights at work (Arbeidstilsynet)", url:"https://www.arbeidstilsynet.no/en/working-hours-and-organisation-of-work/knowyourrights/"}, {label:"Holiday pay, explained", url:"https://www.lifeinnorway.net/holiday-pay/"}, {label:"Tax calculator", url:"https://www.skatteetaten.no/en/person/taxes/tax-calculator/"}, {label:"Watch: intending to work in Norway", url:"https://www.skatteetaten.no/en/person/foreign/are-you-intending-to-work-in-norway/film_en/"}] , icon:"🧾" , for:"Employee" },
+  { id:6, phase:1, title:"Register your address (Folkeregisteret)", badge:"1–2 wks", where:"<a href='https://www.skatteetaten.no/en/person/national-registry/moving/postal-address/' target='_blank' rel='noopener'>skatteetaten.no</a>, if staying 6+ months.", when:"Within the first week.", time:"~1–2 weeks to process.", notes:"Unlocks post, GP assignment, and most digital public services.", critical:false , ask:["Check if you also need to update your address with HR directly."] , icon:"📮" , for:"Employee" },
+
+  { id:7, phase:1, title:"Register with police (EU/EEA only)", badge:"within 3 mo", where:"<a href='https://www.udi.no/en/want-to-apply/residence-under-the-eueeu-regulations/' target='_blank' rel='noopener'>UDI — registration for EU/EEA nationals</a>.", when:"Within 3 months of arrival.", time:"Same day to a few weeks for an appointment.", notes:"Only applies to EU/EEA nationals working more than 3 months. Non-EU citizens are already covered by the UDI permit.", critical:false , ask:["Ask if this is something HR needs confirmation of once it's done."] , icon:"👮" , for:"Employee" },
+  { id:8, phase:1, title:"Open a Norwegian bank account", badge:"same day–2 wks", where:"Bank of choice, in person.", when:"As soon as the D-number / ID number is issued.", time:"Same day to 2 weeks. Some banks pre-open with limits before the ID number lands.", notes:"Needed to receive salary and to apply for BankID next. Policies vary a lot by bank — some ask for a D-number only, others want the full national ID number, a fixed address, or proof of regular income first. DNB, Nordea and SpareBank 1 are the ones most internationals end up with, largely because they're used to handling foreign applicants and offer solid English-language support, but it's worth comparing a couple before picking one.", critical:false , ask:["Ask if the company has a preferred or partner bank — some employers have a relationship that speeds up account opening.", "Ask colleagues which bank they'd recommend, especially if they moved from abroad too."] , links:[{label:"How to open a bank account in Norway (Life in Norway)", url:"https://www.lifeinnorway.net/open-a-bank-account"}] , icon:"🏦" , for:"Employee" },
+  { id:9, phase:1, title:"Activate BankID", badge:"days", where:"Your bank, in person.", when:"Right after the account is opened.", time:"Often same-visit, sometimes a few days for a code device by post.", notes:"BankID is the key to nearly every Norwegian digital service — Altinn, Helsenorge, the tax return, and more.", critical:false , links:[{label:"Order MinID instead", url:"https://minid.no/order"}, {label:"More about electronic IDs", url:"https://sua.no/online"}] , icon:"🔐" , for:"Employee" },
+  { id:10, phase:2, title:"Register a fastlege (GP)", badge:"~2 wks", where:"<a href='https://www.helsenorge.no/en/health-rights-in-norway/health-care-rights/#general-practitioner' target='_blank' rel='noopener'>helsenorge.no</a>.", when:"As soon as the address is registered.", time:"Request is immediate; assignment can take ~2 weeks.", notes:"Requires a national ID/D-number and a registered address first.", critical:false , ask:["Ask if there's any additional health support available."] , icon:"🩺" , for:"Employee" },
+  { id:11, phase:2, title:"Confirm National Insurance membership (Folketrygden)", badge:"automatic", where:"<a href='https://www.nav.no/en/home' target='_blank' rel='noopener'>NAV</a> — automatic for most salaried staff via the employer.", when:"First month.", time:"Usually automatic; confirm on nav.no.", notes:"For most salaried employees there's nothing to actively apply for — being on a Norwegian payroll enrols you automatically. \"Confirming\" here just means double-checking on nav.no that it's registered correctly, not a separate application. Covers public healthcare costs, sick pay, parental benefits, and pension accrual.", critical:false , ask:["Check how sick leave should be reported, and to whom.", "Ask how holiday pay (feriepenger) works — it's usually paid separately, often as a lump sum the following June, so take-home pay looks different most other months."] , links:[{label:"Tax info in your language", url:"https://www.skatteetaten.no/taxnorway"}, {label:"Register your account for refunds", url:"https://www.skatteetaten.no/changeaccount"}] , icon:"🛡️" , for:"Employer" },
+
+  { id:12, phase:2, title:"Start Norwegian language classes", badge:"8–20 wk terms", where:"Municipal <a href='https://www.oslo.kommune.no/english/welcome-to-oslo/learning-norwegian/' target='_blank' rel='noopener'>voksenopplæring</a>, a private school, or an employer-sponsored course.", when:"First 1–3 months.", time:"Courses run in terms, typically 8–20 weeks; municipal waitlists possible.", notes:"Work-permit holders aren't automatically entitled to free lessons like family/protection permits are — budget for a private course unless the employer subsidises one.", critical:false , ask:["Ask your company if they offer language classes."] , links:[{label:"Learning Norwegian in Oslo", url:"https://www.oslo.kommune.no/english/welcome-to-oslo/learning-norwegian/"}, {label:"How to find the right course for you", url:"https://www.oslo.kommune.no/english/welcome-to-oslo/learning-norwegian/how-to-find-the-right-course-for-you/"}, {label:"Learn Norwegian on a budget", url:"https://www.oslo.kommune.no/english/welcome-to-oslo/learning-norwegian/learn-norwegian-on-a-budget/"}, {label:"Deichman language café", url:"https://deichman.no/vi-tilbyr/sprc3a5kkafc3a9_9df84b80-1290-4eaa-bade-b8d6faaecf34"}] , icon:"🗣️" , for:"Employee" },
+  { id:13, phase:2, title:"Know your rights — unions &amp; pension", badge:"few weeks", where:"Employer HR, or the union relevant to your sector.", when:"First 1–3 months.", time:"Immediate to a few weeks.", notes:"Union membership is optional but common practice in Norway, and often comes bundled with legal aid and extra insurance. Ask HR which union fits your role, and confirm how pension contributions (OTP) work from day one — it's part of knowing what you're entitled to, not just what's expected of you.", critical:false , ask:["Ask how pension contributions work here, and when they start.", "Ask if your company is unionised."] , links:[{label:"Know Your Rights (Arbeidstilsynet)", url:"https://knowyourrights.no"}, {label:"Trade unions explained", url:"https://fagforeninger.no"}] , icon:"⚖️" , for:"Either" },
+
+  { id:14, phase:2, title:"Diarise your permit renewal", badge:"3 mo before expiry", where:"<a href='https://www.udi.no/en/want-to-renew/' target='_blank' rel='noopener'>UDI</a>, apply before the current permit expires.", when:"~3 months before expiry.", time:"Similar to the initial application: 4–12 weeks.", notes:"Set a calendar reminder now — do not let the permit lapse.", critical:false , ask:["Check whether HR sends reminders ahead of renewal dates."] , icon:"🔔" , for:"Employee" },
+
+  { id:15, phase:2, title:"Track toward Permanent Residence", badge:"3 yrs", where:"<a href='https://www.udi.no/en/' target='_blank' rel='noopener'>UDI</a>.", when:"From day one — keep records of continuous residence.", time:"Eligible after 3 years' continuous legal residence, subject to income and language requirements.", notes:"Requires B1-level Norwegian, a completed social studies course, and an income threshold that's reviewed annually — confirm the current figure with UDI.", critical:false, settled:true , ask:["Ask if there's any support once you're eligible for permanent residence."] , links:[{label:"Permanent residence requirements (UDI)", url:"https://www.udi.no/en/want-to-apply/permanent-residence/permanent-residence-permit/adult"}] , icon:"🏆" , for:"Employee" },
+];
+
+// Stamp fill is now phase-based — each phase gets its own brand colour, so the
+// trail reads left-to-right as a rainbow of progress. Critical / info / settled
+// steps still carry their category signal via the badge dot and border colour.
+function stepFill(step){
+  return PHASES[step.phase].color;
+}
+function stepTextColor(step){
+  if(step.critical) return 'var(--important-text)';
+  if(step.culture) return 'var(--info-text)';
+  if(step.settled) return 'var(--settled-text)';
+  return 'var(--quest-text)';
+}
+
+// ---------- render path ----------
+const pathCol = document.getElementById('pathCol');
+const svg = document.getElementById('pathSvg');
+
+const ROW_H = 100;
+const DIVIDER_H = 74;
+const CALLOUT_H = 96;
+
+// Non-task asides scattered along the trail — keyed by the step id they appear right after.
+// Not part of the connecting path line. `style:"white"` matches the white detail-panel
+// look instead of the default lavender treatment.
+const CALLOUTS = {
+  1: { icon:"🌍", side:"left", style:"white", short:"Learn about Norway", more:"A little context goes a long way — understanding etiquette, communication style, and typical costs before you land makes the first few weeks feel far less foreign. Worth a look before you arrive: <a href='https://workingwithnorwegians.com/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Working with Norwegians</a>, the <a href='https://commisceo-global.com/country-guides/norway-guide/#Key_Insights_into_Norwegian_Business_Culture' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Commisceo Global country guide</a>, and <a href='https://www.oslomet.no/en/about/sifo/reference-budget' target='_blank' rel='noopener' onclick='event.stopPropagation()'>SIFO's cost-of-living reference budget</a>." },
+  3: { icon:"🏡", side:"right", style:"white", short:"Arrange housing", more:"Start 6–10 weeks before you land. <a href='https://www.finn.no/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Finn.no</a>, <a href='https://www.hybel.no/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Hybel.no</a>, <a href='https://www.hjem.no/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Hjem.no</a> and <a href='https://www.utleiemegleren.no/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Utleiemegleren.no</a> are all worth checking, plus Facebook groups for internationals in Oslo often have listings that never make the big sites. A signed lease of 6+ months (or proof of address) is required for your ID-check appointment, so make sure this is sorted in good time. Also worth a look: the <a href='https://www.forbrukerradet.no/kontrakter/hus/contract-for-rental-of-accommodation-tenancy-agreement/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>standard tenancy agreement</a> and <a href='https://www.regjeringen.no/en/dokumenter/the-tenancy-act/id270390/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>the Tenancy Act</a>." },
+  13: { icon:"📚", side:"left", style:"white", short:"Enrol kids in school", more:"Apply the moment your address is confirmed — spots are competitive, and barnehage has one main annual intake in August, while school placement takes a few weeks. <a href='https://www.oslo.kommune.no/english/welcome-to-oslo/children-families/kindergartens-and-childcare/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Oslo Kommune — kindergartens &amp; childcare</a>." },
+  12: { icon:"🤗", side:"right", style:"white", short:"Family reunification", more:"If needed, start this the moment it's clear family will join later — don't wait for the rest of the checklist to settle first. It's commonly the slowest process on the whole trail, often 3–6 months or considerably longer at peak load. <a href='https://www.udi.no/en/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>UDI</a>." },
+  14: { icon:"🤝", side:"right", style:"white", short:"Connect your partner with a mentor", more:"An accompanying partner doesn't get the built-in social structure a job provides — no colleagues, no meetings, no natural reason to talk to anyone new. A mentor who's been through the same move can shortcut a lot of the isolation. Worth asking your company's HR team about, or reaching out to independent partner and expat networks in Oslo directly. <a href='https://mentiway.com/no/apne-mentorprogrammer-i-norge/' target='_blank' rel='noopener' onclick='event.stopPropagation()'>Open mentorship programmes in Norway</a>." },
+};
+
+let nodeEls = [];
+let bubbleEls = [];
+
+function getPattern(width){
+  if(width < 460)  return [50, 50];   // straight column, phone — bubbles centre-stack here, not edge-anchored
+  if(width < 620)  return [44, 56];   // gentle offset — avoids every label reaching the same direction at full length
+  if(width < 900)  return [35, 65];   // pulled in from the trail edge for more bubble clearance
+  return [30, 70];                    // desktop
+}
+
+function render(){
+  pathCol.innerHTML = '';
+  nodeEls = [];
+  bubbleEls = [];
+  const containerWidth = pathCol.parentElement.offsetWidth || 800;
+  const XPATTERN = getPattern(containerWidth);
+  let y = 10;
+  let flowIdx = 0;
+  let currentPhase = -1;
+
+  STEPS.forEach((step, idx) => {
+    if(step.phase !== currentPhase){
+      currentPhase = step.phase;
+      const ph = PHASES[currentPhase];
+      const div = document.createElement('div');
+      div.className = 'divider';
+      div.style.top = y + 'px';
+      div.innerHTML = `<span class="num">${String(currentPhase+1).padStart(2,'0')}</span>
+        <span class="line"></span>
+        <span class="txt"><p class="ph">${ph.title}</p><p class="sub2">${ph.sub}</p></span>`;
+      pathCol.appendChild(div);
+      y += DIVIDER_H;
+    }
+
+    const xPct = XPATTERN[flowIdx % XPATTERN.length];
+    const flip = xPct > 50;
+    const node = document.createElement('button');
+    node.className = 'node' + (flip ? ' flip' : '') + (step.critical ? ' critical' : '') + (step.culture ? ' culture' : '') + (step.settled ? ' settled' : '');
+    node.style.top = y + 'px';
+    node.style.left = xPct + '%';
+    node.style.transform = 'translate(-50%, -50%)';
+    node.dataset.id = step.id;
+    node.innerHTML = `
+      <span class="stamp" style="background:${stepFill(step)}"></span>
+      <span class="label">
+        <span class="t">${step.title}</span>
+      </span>`;
+    node.addEventListener('click', () => {
+      node.classList.remove('stamped');
+      void node.offsetWidth; // restart the animation even on repeat clicks
+      node.classList.add('stamped');
+      selectStep(step.id);
+    });
+    pathCol.appendChild(node);
+    nodeEls.push({ id: step.id, xPct, y });
+
+    y += ROW_H;
+    flowIdx++;
+
+    const callout = CALLOUTS[step.id];
+    if(callout){
+      const bubble = document.createElement('button');
+      bubble.type = 'button';
+      bubble.className = 'callout-bubble cb-' + callout.side + (callout.style === 'white' ? ' cb-white' : '');
+      bubble.style.top = y + 'px';
+      bubble.innerHTML = `
+        <span class="cb-icon">${callout.icon}</span>
+        <span class="cb-body">
+          <span class="cb-title">${callout.short}</span>
+          <span class="cb-more"><span class="cb-more-inner">${callout.more}</span></span>
+          <span class="cb-toggle"><span class="cb-toggle-open">+</span><span class="cb-toggle-close">–</span></span>
+        </span>`;
+      bubble.addEventListener('click', () => {
+        bubble.classList.remove('spin');
+        void bubble.offsetWidth;
+        bubble.classList.add('spin');
+        const nowExpanded = bubble.classList.toggle('expanded');
+        if(window.innerWidth <= 459.98){
+          document.getElementById('backdrop').classList.toggle('open', nowExpanded);
+        }
+      });
+      pathCol.appendChild(bubble);
+      bubbleEls.push({ anchorId: step.id, side: callout.side, top: y, el: bubble });
+      // Use the bubble's *actual* rendered height rather than a fixed
+      // constant — a longer title wraps to more lines on a narrow phone
+      // screen than it does on desktop, and a fixed guess was leaving it
+      // tall enough to spill into the next step below it.
+      const actualH = bubble.offsetHeight || CALLOUT_H;
+      y += actualH + 24;
+      // If a phase change lands right after this bubble, give it a bit more
+      // breathing room so the next divider doesn't sit on top of the bubble.
+      const next = STEPS[idx + 1];
+      if(next && next.phase !== step.phase){
+        y += 70;
+      }
+    }
+  });
+
+  y += 10;
+  pathCol.style.height = y + 'px';
+  drawConnectors();
+}
+
+function drawConnectors(){
+  const w = pathCol.offsetWidth;
+  const h = pathCol.offsetHeight;
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+
+  let d = '';
+  nodeEls.forEach((n, i) => {
+    const x = (n.xPct/100) * w;
+    const yy = n.y;
+    if(i === 0){ d += `M ${x} ${yy} `; }
+    else {
+      const prev = nodeEls[i-1];
+      const px = (prev.xPct/100) * w;
+      const py = prev.y;
+      const midY = (py + yy) / 2;
+      d += `C ${px} ${midY}, ${x} ${midY}, ${x} ${yy} `;
+    }
+  });
+
+  svg.innerHTML = `<path d="${d}" fill="none" stroke="#C9B98F" stroke-width="3" stroke-dasharray="1 12" stroke-linecap="round"/>`;
+}
+
+function selectStep(id){
+  document.querySelectorAll('.node').forEach(n => n.classList.toggle('active', Number(n.dataset.id) === id));
+  const step = STEPS.find(s => s.id === id);
+  const ph = PHASES[step.phase];
+  const body = document.getElementById('panelBody');
+  const pbadgeClass = step.critical ? 'crit' : step.culture ? 'culture' : step.settled ? 'settled' : '';
+  const pbadgeText = step.critical ? '● important — don\u2019t forget' : step.culture ? '◆ information' : step.settled ? '✓ you\u2019re done' : step.badge;
+  const whereLabel = step.culture ? "What you'll notice" : "Where / how";
+  const whenLabel = step.culture ? "When it matters" : "When to start";
+  const timeLabel = step.culture ? "Time to adjust" : "Typical processing time";
+  const linksHtml = (step.links && step.links.length)
+    ? `<div class="step-links">
+        <p class="ph-tag" style="color:var(--ink-soft);">Useful links</p>
+        <ul>${step.links.map(l => `<li><a href="${l.url}" target="_blank" rel="noopener">${l.label}</a></li>`).join('')}</ul>
+      </div>`
+    : '';
+  body.innerHTML = `
+    <p class="ph-tag" style="color:${stepTextColor(step)}">${ph.title}</p>
+    <h2>${step.title}</h2>
+    <div class="badge-row">
+      <span class="pbadge ${pbadgeClass}">${pbadgeText}</span>
+      <span class="for-badge">${step.for === 'Employer' ? '🏢' : step.for === 'Either' ? '🤝' : '🧑'} Task for: ${step.for}</span>
+    </div>
+    <dl>
+      <dt>${whereLabel}</dt><dd>${step.where}</dd>
+      <dt>${whenLabel}</dt><dd>${step.when}</dd>
+      <dt>${timeLabel}</dt><dd>${step.time}</dd>
+      <dt>Notes</dt><dd>${step.notes}</dd>
+    </dl>
+    ${linksHtml}`;
+  const hrList = document.getElementById('hrList');
+  const hrPrompts = document.getElementById('hrPrompts');
+  const hasAsk = step.ask && step.ask.length > 0;
+  hrPrompts.style.display = hasAsk ? '' : 'none';
+  hrList.innerHTML = hasAsk ? step.ask.map(q => `<li>${q}</li>`).join('') : '';
+  if(window.innerWidth <= 880){
+    document.getElementById('panel').classList.add('open');
+    document.getElementById('backdrop').classList.add('open');
+  }
+}
+
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('backdrop').addEventListener('click', closeDrawer);
+function closeDrawer(){
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('open');
+  document.querySelectorAll('.callout-bubble.expanded').forEach(b => b.classList.remove('expanded'));
+}
+
+function buildPrintFallback(){
+  const el = document.getElementById('printFallback');
+  let html = '<h1 style="font-family:\'STIX Two Text\',serif;">Moving Toward a Goal — Oslo&Co Onboarding</h1>';
+  let currentPhase = -1;
+  STEPS.forEach(step => {
+    if(step.phase !== currentPhase){
+      currentPhase = step.phase;
+      html += `<h2>${PHASES[currentPhase].title} — ${PHASES[currentPhase].sub}</h2>`;
+    }
+    html += `<div class="print-row">
+      <b>${String(step.id).padStart(2,'0')}</b>
+      <span>${step.title}${step.critical ? ' ⚑' : ''}<div class="print-note">${step.where} — ${step.notes}</div></span>
+      <span>${step.badge}</span>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { render(); }, 150);
+});
+
+render();
+buildPrintFallback();
+selectStep(1);
+</script>
+</body>
+</html>
